@@ -33,7 +33,7 @@ function sendRequest(url) {
                 if (xhr.status === 200) {
                     resolve(JSON.parse(xhr.response));
                 } else {
-                    reject();
+                    reject(new Error(`Request failed with status ${xhr.status}`));
                 }
             }
         };
