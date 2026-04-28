@@ -9,17 +9,20 @@ async function run() {
     try {
         const orgOgrns = await sendRequest(API.organizationList);
         const ogrns = orgOgrns.join(",");
-
-        const requisites = await sendRequest(`${API.orgReqs}?ogrn=${ogrns}`);
+        const [requisites, analytics, buh]
+            = await Promise.all([
+            sendRequest(`${API.orgReqs}?ogrn=${ogrns}`),
+            sendRequest(`${API.analytics}?ogrn=${ogrns}`),
+            sendRequest(`${API.buhForms}?ogrn=${ogrns}`)
+        ]);
         const orgsMap = reqsToMap(requisites);
 
-        const analytics = await sendRequest(`${API.analytics}?ogrn=${ogrns}`);
         addInOrgsMap(orgsMap, analytics, "analytics");
 
-        const buh = await sendRequest(`${API.buhForms}?ogrn=${ogrns}`);
         addInOrgsMap(orgsMap, buh, "buhForms");
 
         render(orgsMap, orgOgrns);
+
     } catch (error) {
         console.error("Error:", error);
     }
@@ -30,10 +33,11 @@ run();
 function sendRequest(url) {
     return fetch(url)
         .then((response) => {
-            if (!response.ok) {
-                alert(`Код ответа: ${response.status}\nСтатус ответа: ${response.statusText}`);
+            if (response.ok) {
+                return response.json();
             }
-            return response.json();
+            alert(`Код ответа: ${response.status}\nСтатус ответа: ${response.statusText}`);
+            throw new Error(`HTTP error!`);
         })
 }
 
