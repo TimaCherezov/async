@@ -1,6 +1,6 @@
 const API = {
     organizationList: "/orgsList",
-    analytics: "/api3/analytics",
+    analytics: "/api3/analitics",
     orgReqs: "/api3/reqBase",
     buhForms: "/api3/buh",
 };
@@ -23,7 +23,6 @@ async function run() {
     } catch (error) {
         console.error("Error:", error);
     }
-
 }
 
 run();
@@ -32,7 +31,7 @@ function sendRequest(url) {
     return fetch(url)
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`Request failed with status ${response.status}`);
+                alert(`Код ответа: ${response.status}\nСтатус ответа: ${response.statusText}`);
             }
             return response.json();
         })
